@@ -13262,10 +13262,10 @@ mg_unlock_context(struct mg_context *ctx)
 #if defined(USE_WEBSOCKET)
 
 #if !defined(NO_SSL_DL)
-#if !defined(OPENSSL_API_3_0)
+// #if !defined(OPENSSL_API_3_0)
 #define SHA_API static
 #include "sha1.inl"
-#endif
+// #endif
 #endif
 
 static int
@@ -13274,9 +13274,9 @@ send_websocket_handshake(struct mg_connection *conn, const char *websock_key)
 	static const char *magic = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 	char buf[100], sha[20], b64_sha[sizeof(sha) * 2];
 	size_t dst_len = sizeof(b64_sha);
-#if !defined(OPENSSL_API_3_0)
+// #if !defined(OPENSSL_API_3_0)
 	SHA_CTX sha_ctx;
-#endif
+// #endif
 	int truncated;
 
 	/* Calculate Sec-WebSocket-Accept reply from Sec-WebSocket-Key. */
@@ -13288,18 +13288,19 @@ send_websocket_handshake(struct mg_connection *conn, const char *websock_key)
 
 	DEBUG_TRACE("%s", "Send websocket handshake");
 
-#if defined(OPENSSL_API_3_0)
-	EVP_Digest((unsigned char *)buf,
-	           (uint32_t)strlen(buf),
-	           (unsigned char *)sha,
-	           NULL,
-	           EVP_get_digestbyname("sha1"),
-	           NULL);
-#else
+// Crashes when using OpenSSL 3.0, with ssl disabled
+// #if defined(OPENSSL_API_3_0)
+// 	EVP_Digest((unsigned char *)buf,
+// 	           (uint32_t)strlen(buf),
+// 	           (unsigned char *)sha,
+// 	           NULL,
+// 	           EVP_get_digestbyname("sha1"),
+// 	           NULL);
+// #else
 	SHA1_Init(&sha_ctx);
 	SHA1_Update(&sha_ctx, (unsigned char *)buf, (uint32_t)strlen(buf));
 	SHA1_Final((unsigned char *)sha, &sha_ctx);
-#endif
+// #endif
 	mg_base64_encode((unsigned char *)sha, sizeof(sha), b64_sha, &dst_len);
 	mg_printf(conn,
 	          "HTTP/1.1 101 Switching Protocols\r\n"
