@@ -1,8 +1,5 @@
-# Use at least CMake 3.3
-cmake_minimum_required (VERSION 3.3.0)
-cmake_policy(VERSION 3.2.2)
-cmake_policy(SET CMP0054 NEW)
-cmake_policy(SET CMP0057 NEW)
+cmake_minimum_required(VERSION 3.10)
+cmake_policy(VERSION 3.10)
 
 # Set up the project
 project (civetweb VERSION 1.16.0)
@@ -240,8 +237,11 @@ message(STATUS "Compile for OpenSSL 1.1 API - ${CIVETWEB_SSL_OPENSSL_API_1_1}")
 option(CIVETWEB_SSL_OPENSSL_API_3_0 "Use the OpenSSL 3.0 API" OFF)
 message(STATUS "Compile for OpenSSL 3.0 API - ${CIVETWEB_SSL_OPENSSL_API_3_0}")
 
+option(CIVETWEB_ENABLE_GNUTLS "Use the GnuTls" OFF)
+message(STATUS "SSL support (GnuTLS)  - ${CIVETWEB_ENABLE_GNUTLS}")
+
 option(CIVETWEB_ENABLE_MBEDTLS "Use the MbedTls" OFF)
-message(STATUS "SSL support - ${CIVETWEB_ENABLE_MBEDTLS}")
+message(STATUS "SSL support (MbedTLS) - ${CIVETWEB_ENABLE_MBEDTLS}")
 
 # Dynamically load or link the SSL libraries
 cmake_dependent_option(
@@ -541,6 +541,8 @@ if (CIVETWEB_ENABLE_MEMORY_DEBUGGING)
 endif()
 if (NOT CIVETWEB_ENABLE_SSL)
   add_definitions(-DNO_SSL)
+elseif (CIVETWEB_ENABLE_GNUTLS)
+  add_definitions(-DUSE_GNUTLS)
 elseif (CIVETWEB_ENABLE_MBEDTLS)
   add_definitions(-DUSE_MBEDTLS)
 elseif (NOT CIVETWEB_ENABLE_SSL_DYNAMIC_LOADING)

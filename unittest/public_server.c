@@ -457,10 +457,14 @@ test_mg_start_stop_http_server_impl(int ipv6, int bound)
 	ck_assert_int_eq(portinfo[0].port, 0);
 	ck_assert_int_eq(portinfo[0].is_ssl, 0);
 	ck_assert_int_eq(portinfo[0].is_redirect, 0);
+	ck_assert_int_eq(portinfo[0].is_optional, 0);
+	ck_assert_int_eq(portinfo[0].is_bound, 0);
 	ck_assert_int_eq(portinfo[1].protocol, 0);
 	ck_assert_int_eq(portinfo[1].port, 0);
 	ck_assert_int_eq(portinfo[1].is_ssl, 0);
 	ck_assert_int_eq(portinfo[1].is_redirect, 0);
+	ck_assert_int_eq(portinfo[1].is_optional, 0);
+	ck_assert_int_eq(portinfo[1].is_bound, 0);
 
 	ret = mg_get_server_ports(ctx, 4, portinfo);
 	ck_assert_int_eq(ret, 1);
@@ -472,10 +476,14 @@ test_mg_start_stop_http_server_impl(int ipv6, int bound)
 	ck_assert_int_eq(portinfo[0].port, 8080);
 	ck_assert_int_eq(portinfo[0].is_ssl, 0);
 	ck_assert_int_eq(portinfo[0].is_redirect, 0);
+	ck_assert_int_eq(portinfo[0].is_optional, 0);
+	ck_assert_int_eq(portinfo[0].is_bound, 1);
 	ck_assert_int_eq(portinfo[1].protocol, 0);
 	ck_assert_int_eq(portinfo[1].port, 0);
 	ck_assert_int_eq(portinfo[1].is_ssl, 0);
 	ck_assert_int_eq(portinfo[1].is_redirect, 0);
+	ck_assert_int_eq(portinfo[1].is_optional, 0);
+	ck_assert_int_eq(portinfo[1].is_bound, 0);
 
 	test_sleep(1);
 
@@ -649,7 +657,7 @@ START_TEST(test_mg_start_stop_https_server)
 	OPTIONS[opt_idx++] = ".";
 #endif
 	OPTIONS[opt_idx++] = "listening_ports";
-	OPTIONS[opt_idx++] = "8080r,8443s";
+	OPTIONS[opt_idx++] = "8080r,8443os";
 	OPTIONS[opt_idx++] = "ssl_certificate";
 	OPTIONS[opt_idx++] = ssl_cert;
 
@@ -674,10 +682,14 @@ START_TEST(test_mg_start_stop_https_server)
 	ck_assert_int_eq(portinfo[0].port, 0);
 	ck_assert_int_eq(portinfo[0].is_ssl, 0);
 	ck_assert_int_eq(portinfo[0].is_redirect, 0);
+	ck_assert_int_eq(portinfo[0].is_optional, 0);
+	ck_assert_int_eq(portinfo[0].is_bound, 0);
 	ck_assert_int_eq(portinfo[1].protocol, 0);
 	ck_assert_int_eq(portinfo[1].port, 0);
 	ck_assert_int_eq(portinfo[1].is_ssl, 0);
 	ck_assert_int_eq(portinfo[1].is_redirect, 0);
+	ck_assert_int_eq(portinfo[1].is_optional, 0);
+	ck_assert_int_eq(portinfo[1].is_bound, 0);
 
 	ret = mg_get_server_ports(ctx, 4, portinfo);
 	ck_assert_int_eq(ret, 2);
@@ -685,14 +697,20 @@ START_TEST(test_mg_start_stop_https_server)
 	ck_assert_int_eq(portinfo[0].port, 8080);
 	ck_assert_int_eq(portinfo[0].is_ssl, 0);
 	ck_assert_int_eq(portinfo[0].is_redirect, 1);
+	ck_assert_int_eq(portinfo[0].is_optional, 0);
+	ck_assert_int_eq(portinfo[0].is_bound, 1);
 	ck_assert_int_eq(portinfo[1].protocol, 1);
 	ck_assert_int_eq(portinfo[1].port, 8443);
 	ck_assert_int_eq(portinfo[1].is_ssl, 1);
 	ck_assert_int_eq(portinfo[1].is_redirect, 0);
+	ck_assert_int_eq(portinfo[1].is_optional, 1);
+	ck_assert_int_eq(portinfo[1].is_bound, 1);
 	ck_assert_int_eq(portinfo[2].protocol, 0);
 	ck_assert_int_eq(portinfo[2].port, 0);
 	ck_assert_int_eq(portinfo[2].is_ssl, 0);
 	ck_assert_int_eq(portinfo[2].is_redirect, 0);
+	ck_assert_int_eq(portinfo[2].is_optional, 0);
+	ck_assert_int_eq(portinfo[2].is_bound, 0);
 
 	test_sleep(1);
 
@@ -771,7 +789,7 @@ START_TEST(test_mg_server_and_client_tls)
 	OPTIONS[opt_idx++] = ".";
 #endif
 	OPTIONS[opt_idx++] = "listening_ports";
-	OPTIONS[opt_idx++] = "8080r,8443s";
+	OPTIONS[opt_idx++] = "8080r,8443os";
 	OPTIONS[opt_idx++] = "ssl_certificate";
 	OPTIONS[opt_idx++] = server_cert;
 	OPTIONS[opt_idx++] = "ssl_verify_peer";
@@ -800,14 +818,20 @@ START_TEST(test_mg_server_and_client_tls)
 	ck_assert_int_eq(ports[0].port, 8080);
 	ck_assert_int_eq(ports[0].is_ssl, 0);
 	ck_assert_int_eq(ports[0].is_redirect, 1);
+	ck_assert_int_eq(ports[0].is_optional, 0);
+	ck_assert_int_eq(ports[0].is_bound, 1);
 	ck_assert_int_eq(ports[1].protocol, 1);
 	ck_assert_int_eq(ports[1].port, 8443);
 	ck_assert_int_eq(ports[1].is_ssl, 1);
 	ck_assert_int_eq(ports[1].is_redirect, 0);
+	ck_assert_int_eq(ports[1].is_optional, 1);
+	ck_assert_int_eq(ports[1].is_bound, 1);
 	ck_assert_int_eq(ports[2].protocol, 0);
 	ck_assert_int_eq(ports[2].port, 0);
 	ck_assert_int_eq(ports[2].is_ssl, 0);
 	ck_assert_int_eq(ports[2].is_redirect, 0);
+	ck_assert_int_eq(ports[2].is_optional, 0);
+	ck_assert_int_eq(ports[2].is_bound, 0);
 
 	test_sleep(1);
 
@@ -823,7 +847,7 @@ START_TEST(test_mg_server_and_client_tls)
 	 * while Ubuntu Xenial, Ubuntu Trusty and Windows test containers at
 	 * Travis CI do not. Maybe it is OpenSSL version specific.
 	 */
-#if defined(OPENSSL_API_1_1) || defined(OPENSSL_API_3_0) 
+#if defined(OPENSSL_API_1_1) || defined(OPENSSL_API_3_0)
 	if (client_conn) {
 		/* Connect succeeds, but the connection is unusable. */
 		mg_printf(client_conn, "GET / HTTP/1.0\r\n\r\n");
@@ -3067,7 +3091,7 @@ START_TEST(test_handle_form)
 
 	/* Handle form: "POST multipart/form-data" without trailing CRLF*/
 	multipart_body =
-		"--multipart-form-data-boundary--see-RFC-2388\r\n"
+	    "--multipart-form-data-boundary--see-RFC-2388\r\n"
 	    "Content-Disposition: form-data; name=\"textin\"\r\n"
 	    "\r\n"
 	    "text\r\n"
@@ -3605,11 +3629,11 @@ START_TEST(test_handle_form)
 	multipart_body =
 	    "--multipart-form-data-boundary--see-RFC-2388\r\n"
 	    "Content-Disposition: form-data; "
-		"custom1name=\"1\"; "
-		"custom2name=\"2\"; "
-		"custom3name=\"3\"; "
-		"custom4name=\"4\"; "
-		"name=\"textin\"\r\n"
+	    "custom1name=\"1\"; "
+	    "custom2name=\"2\"; "
+	    "custom3name=\"3\"; "
+	    "custom4name=\"4\"; "
+	    "name=\"textin\"\r\n"
 	    "\r\n"
 	    "text\r\n"
 	    "--multipart-form-data-boundary--see-RFC-2388\t\t\t\r\n"
@@ -3767,53 +3791,52 @@ START_TEST(test_handle_form)
 	mg_close_connection(client_conn);
 
 	/* Handle form: "POST multipart/form-data" very long preamble */
-	multipart_body =
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "preamblepreamblepreamblepreamblepreamble\r\n"
-	    "--multipart-form-data-boundary--see-RFC-2388\r\n";
-	    "Content-Disposition: form-data; name=\"passwordin\"\r\n"
-	    "\r\n"
-	    "\r\n"
-	    "--multipart-form-data-boundary--see-RFC-2388--\r\n";
+	multipart_body = "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "preamblepreamblepreamblepreamblepreamble\r\n"
+	                 "--multipart-form-data-boundary--see-RFC-2388\r\n";
+	"Content-Disposition: form-data; name=\"passwordin\"\r\n"
+	"\r\n"
+	"\r\n"
+	"--multipart-form-data-boundary--see-RFC-2388--\r\n";
 
 	body_len = strlen(multipart_body);
 	ck_assert_uint_eq(body_len, 1768); /* not required */
