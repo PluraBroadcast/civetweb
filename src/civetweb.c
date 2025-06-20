@@ -10687,7 +10687,20 @@ handle_static_file_request(struct mg_connection *conn,
 
 	/* Create 2xx (200, 206) response */
 	mg_response_header_start(conn, conn->status_code);
-	send_static_cache_header(conn);
+
+    /* Plura Modification: If the URI is for the root/index, we insert no cache headers. */
+    if ((conn->request_info.local_uri[0] == '/') &&
+        (conn->request_info.local_uri[1] == '\0')) {
+        mg_response_header_add(conn,
+                               "Cache-Control",
+                               "no-cache, no-store, must-revalidate",
+                               -1);
+        mg_response_header_add(conn, "Pragma", "no-cache", -1);
+        mg_response_header_add(conn, "Expires", "0", -1);
+    } else {
+        send_static_cache_header(conn);
+    }
+
 	send_additional_header(conn);
 	send_cors_header(conn);
 	mg_response_header_add(conn,
@@ -13376,6 +13389,7 @@ send_websocket_handshake(struct mg_connection *conn, const char *websock_key)
 	static const char *magic = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 	char buf[100], sha[20], b64_sha[sizeof(sha) * 2];
 	size_t dst_len = sizeof(b64_sha);
+// Plura:
 // #if !defined(OPENSSL_API_3_0)
 	SHA_CTX sha_ctx;
 // #endif
@@ -13390,7 +13404,7 @@ send_websocket_handshake(struct mg_connection *conn, const char *websock_key)
 
 	DEBUG_TRACE("%s", "Send websocket handshake");
 
-// Crashes when using OpenSSL 3.0, with ssl disabled
+// Plura: Fix for crash when using OpenSSL 3.0, with ssl disabled. Does not impact SSL, only SHA1 calculation for handshake.
 // #if defined(OPENSSL_API_3_0)
 // 	EVP_Digest((unsigned char *)buf,
 // 	           (uint32_t)strlen(buf),
