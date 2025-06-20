@@ -13404,7 +13404,7 @@ send_websocket_handshake(struct mg_connection *conn, const char *websock_key)
 
 	DEBUG_TRACE("%s", "Send websocket handshake");
 
-// PLura: Crashes when using OpenSSL 3.0, with ssl disabled
+// Plura: Fix for crash when using OpenSSL 3.0, with ssl disabled. Does not impact SSL, only SHA1 calculation for handshake.
 // #if defined(OPENSSL_API_3_0)
 // 	EVP_Digest((unsigned char *)buf,
 // 	           (uint32_t)strlen(buf),
